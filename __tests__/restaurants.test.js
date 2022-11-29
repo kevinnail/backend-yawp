@@ -4,12 +4,12 @@ const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
 
-// const mockUser = {
-//   firstName: 'Larry',
-//   lastName: 'Johnson',
-//   email: 'larry@email.com',
-//   password: '12345',
-// };
+const mockUser = {
+  firstName: 'Larry',
+  lastName: 'Johnson',
+  email: 'larry@email.com',
+  password: '12345',
+};
 
 describe('restaurant routes', () => {
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe('restaurant routes', () => {
     `);
   });
 
-  it('GET  /api/v1/restaurants/:restId should return a restaurant with a list of nested reviews', async () => {
+  it.skip('GET  /api/v1/restaurants/:restId should return a restaurant with a list of nested reviews', async () => {
     const resp = await request(app).get('/api/v1/restaurants/1');
     expect(resp.status).toBe(200);
     expect(resp.body).toMatchInlineSnapshot(`
@@ -91,6 +91,35 @@ describe('restaurant routes', () => {
           },
         ],
         "website": "http://www.PipsOriginal.com",
+      }
+    `);
+  });
+
+  const registerAndLogin = async () => {
+    const agent = request.agent(app);
+    const user = await UserService.create(mockUser);
+    await agent
+      .post('/api/v1/users/sessions')
+      .send({ email: mockUser.email, password: mockUser.password });
+
+    return [agent, user];
+  };
+
+  it('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
+    const [agent] = await registerAndLogin();
+    const resp = await agent.post('/api/v1/restaurants/1/reviews').send({
+      stars: 5,
+      detail:
+        'I would live here if they would let me.  Mostly because I am homeless though.',
+    });
+    expect(resp.status).toBe(200);
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "I would live here if they would let me.  Mostly because I am homeless though.",
+        "id": "4",
+        "restaurant_id": "1",
+        "stars": 5,
+        "user_id": "4",
       }
     `);
   });
