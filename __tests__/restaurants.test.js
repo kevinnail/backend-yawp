@@ -105,7 +105,7 @@ describe('restaurant routes', () => {
     return [agent, user];
   };
 
-  it('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
+  it.skip('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
     const [agent] = await registerAndLogin();
     const resp = await agent.post('/api/v1/restaurants/1/reviews').send({
       stars: 5,
@@ -122,6 +122,15 @@ describe('restaurant routes', () => {
         "user_id": "4",
       }
     `);
+  });
+
+  it('DELETE /api/v1/reviews/:id should delete a review', async () => {
+    const [agent] = await registerAndLogin();
+    await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: 5, detail: 'great place' });
+    const resp = await agent.delete('/api/v1/reviews/4');
+    expect(resp.status).toBe(200);
   });
 
   afterAll(() => {
