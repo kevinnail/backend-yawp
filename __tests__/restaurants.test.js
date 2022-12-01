@@ -16,7 +16,7 @@ describe('restaurant routes', () => {
     return setup(pool);
   });
 
-  it.skip('GET /api/v1/restaurants should return a list of restaurants', async () => {
+  it('GET /api/v1/restaurants should return a list of restaurants', async () => {
     const resp = await request(app).get('/api/v1/restaurants');
     expect(resp.status).toBe(200);
     expect(resp.body).toMatchInlineSnapshot(`
@@ -57,7 +57,7 @@ describe('restaurant routes', () => {
     `);
   });
 
-  it.skip('GET  /api/v1/restaurants/:restId should return a restaurant with a list of nested reviews', async () => {
+  it('GET  /api/v1/restaurants/:restId should return a restaurant with a list of nested reviews', async () => {
     const resp = await request(app).get('/api/v1/restaurants/1');
     expect(resp.status).toBe(200);
     expect(resp.body).toMatchInlineSnapshot(`
@@ -105,7 +105,7 @@ describe('restaurant routes', () => {
     return [agent, user];
   };
 
-  it.skip('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
+  it('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
     const [agent] = await registerAndLogin();
     const resp = await agent.post('/api/v1/restaurants/1/reviews').send({
       stars: 5,
